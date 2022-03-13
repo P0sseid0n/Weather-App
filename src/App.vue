@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import SearchScreen from "./components/SearchScreen.vue";
-
+import { useStore } from "./stores";
+const store = useStore()
 </script>
 
 <template>
-   <SearchScreen />
+   <SearchScreen v-if="store.screen == 'select'" />
 </template>
 
 <style lang="scss">
