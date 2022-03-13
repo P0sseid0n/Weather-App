@@ -1,30 +1,59 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import SearchIcon from './Icons/Search.vue'
-import ChevronRightIcon from './Icons/ChevronRight.vue'
+import { ref, type Ref } from 'vue';
+import { ChevronRightIcon, CloseIcon, SearchIcon } from './Icons/'
 import axios from 'axios'
 
 const search = ref('')
 
-function searchLocation() {
+interface ILocation {
+   name: string
+   lat: number
+   lon: number
+   local_names: { pt: string }
+   state?: string
+}
+const locations: Ref<ILocation[]> = ref([])
+
+async function searchLocation() {
    if (search.value.length < 0) return
 
-   // 'https://www.metaweather.com/api/location/search/?query=' + encodeURI(search.value)
+   const apiKey = import.meta.env.VITE_WEATHER_KEY
+
+   const url = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURI(search.value)}&appid=${apiKey}`
+
+   axios.get(url).then(res => {
+      console.log(res.data)
+      locations.value = res.data
+   }).catch(err => {
+      console.log(err)
+   })
+
 }
 </script>
 
 <template>
    <main id="SearchScreen">
+      <button>
+         <CloseIcon />
+      </button>
       <section>
          <div>
             <SearchIcon />
-            <input type="text" placeholder="pesquisar lugar" v-model="search" />
+            <input
+               type="text"
+               placeholder="pesquisar lugar"
+               v-model="search"
+               @keypress.enter="searchLocation"
+            />
          </div>
          <button @click="searchLocation">Pesquisar</button>
       </section>
       <ul>
-         <li v-for="city in ['Nome da cidade', 'Nome da cidade 2']">
-            <p>{{ city }}</p>
+         <li v-for="local in locations">
+            <p>
+               {{ local.local_names.pt || local.name }}
+               <span v-if="local.state">, {{ local.state }}</span>
+            </p>
             <ChevronRightIcon />
          </li>
       </ul>
@@ -38,12 +67,29 @@ function searchLocation() {
    width: 100%;
    height: 100%;
    padding: 32px 16px;
+   position: relative;
+
+   > button {
+      position: absolute;
+      right: 16px;
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+
+      svg {
+         color: #e7e7eb;
+         width: 32px;
+         height: 32px;
+      }
+   }
 }
 
 section {
    width: 100%;
    display: flex;
    flex-direction: row;
+   margin-top: 64px;
 
    > div {
       width: 100%;
@@ -74,20 +120,20 @@ section {
          margin: 0 8px;
       }
    }
-}
 
-button {
-   background: #3c47e9;
-   height: 48px;
-   border: none;
-   padding: 0 16px;
+   button {
+      background: #3c47e9;
+      height: 48px;
+      border: none;
+      padding: 0 16px;
 
-   color: #e7e7eb;
-   font-weight: 600;
-   font-size: 16px;
-   cursor: pointer;
+      color: #e7e7eb;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
 
-   margin-left: 10px;
+      margin-left: 10px;
+   }
 }
 
 ul {
