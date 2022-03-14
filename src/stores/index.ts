@@ -1,20 +1,23 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-
-interface IDayForecast {}
+import type { ILocation } from '@/Types'
 
 export const useStore = defineStore({
 	id: 'weather',
 	state: () => ({
 		location: {
+			timezone: '',
 			name: '',
 			lon: 0,
 			lat: 0,
+			temperature: 0,
+			weather: '',
+			weatherIcon: '',
 		},
 		screen: 'select' as 'view' | 'select',
 	}),
 	actions: {
-		setLocation({ lon, lat, name }: { lon: number; lat: number; name: string }) {
+		setLocation({ lon, lat, ...local }: ILocation) {
 			const apiKey = import.meta.env.VITE_WEATHER_KEY
 
 			axios.defaults.baseURL = 'https://api.openweathermap.org'
@@ -26,8 +29,12 @@ export const useStore = defineStore({
 					console.log(res.data)
 					this.location.lat = res.data.lat
 					this.location.lon = res.data.lon
-					this.location.name = name
+					this.location.name = local?.local_names?.pt || local.name
+					this.location.temperature = Math.round(res.data.current.temp)
 					this.screen = 'view'
+					this.location.weather = res.data.current.weather[0].description
+					this.location.weatherIcon = res.data.current.weather[0].icon
+					this.location.timezone = res.data.timezone
 				})
 				.catch(err => {
 					console.log(err)

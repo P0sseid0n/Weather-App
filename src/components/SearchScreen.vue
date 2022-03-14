@@ -3,18 +3,11 @@ import { ref, type Ref } from 'vue';
 import { ChevronRightIcon, CloseIcon, SearchIcon } from './Icons/'
 import axios from 'axios'
 import { useStore } from '@/stores';
-
+import type { ILocation } from '@/Types'
 const store = useStore()
 const search = ref('')
 
-interface ILocation {
-   name: string
-   lat: number
-   lon: number
-   local_names?: { pt: string }
-   state?: string
-   country: string
-}
+
 const locations: Ref<ILocation[]> = ref([])
 
 async function searchLocation() {
@@ -35,9 +28,9 @@ async function searchLocation() {
 </script>
 
 <template>
-   <section id="SearchScreen">
+   <aside id="SearchScreen">
       <button v-if="store.hasLocation">
-         <CloseIcon />
+         <CloseIcon @click="store.screen = 'view'" />
       </button>
       <section>
          <div>
@@ -63,7 +56,7 @@ async function searchLocation() {
             <ChevronRightIcon />
          </li>
       </ul>
-   </section>
+   </aside>
 </template>
 
 
