@@ -13,6 +13,8 @@ export const useStore = defineStore({
 			temperature: 0,
 			weather: '',
 			weatherIcon: '',
+			wind_speed: 0,
+			humidity: 0,
 		},
 		screen: 'select' as 'view' | 'select',
 	}),
@@ -29,12 +31,15 @@ export const useStore = defineStore({
 					console.log(res.data)
 					this.location.lat = res.data.lat
 					this.location.lon = res.data.lon
-					this.location.name = local?.local_names?.pt || local.name
+					// this.location.name = local?.local_names?.pt || local.name
+					this.location.name = local.name
 					this.location.temperature = Math.round(res.data.current.temp)
 					this.screen = 'view'
 					this.location.weather = res.data.current.weather[0].description
 					this.location.weatherIcon = res.data.current.weather[0].icon
 					this.location.timezone = res.data.timezone
+					this.location.wind_speed = res.data.current.wind_speed
+					this.location.humidity = res.data.current.humidity
 				})
 				.catch(err => {
 					console.log(err)

@@ -33,6 +33,10 @@ const formattedDate = dayjs().tz(store.location.timezone).format('ddd  DD, MMMM'
    color: #6e707a;
 }
 
+aside {
+   background: #1e213a;
+}
+
 header {
    display: flex;
    justify-content: space-between;

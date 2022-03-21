@@ -47,10 +47,8 @@ async function searchLocation() {
       <ul>
          <li v-for="local in locations" @click="store.setLocation(local)">
             <p>
-               {{ local?.local_names?.pt || local.name }}
-               <span
-                  v-if="local.state"
-               >, {{ local.state }}</span>
+               {{ local.name }}
+               <span v-if="local.state">, {{ local.state }}</span>
                <span v-if="local.country">, {{ local.country }}</span>
             </p>
             <ChevronRightIcon />
